@@ -19,3 +19,10 @@
                  (t items))))
       (first (drop-appendages rev)))))
 
+(defun expo (basis exponent)
+  "Calculate the EXPONENT'th power of BASIS."
+  (cond
+    ((= exponent 0) 1)
+    ((< exponent 0) (* (/ 1 basis) (expo basis (1+ exponent))))
+    (t (* basis (expo basis (- exponent 1))))))
+
