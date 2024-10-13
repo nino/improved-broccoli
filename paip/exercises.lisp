@@ -19,10 +19,17 @@
                  (t items))))
       (first (drop-appendages rev)))))
 
+;; Exercise 1.2 [m]
+
 (defun expo (basis exponent)
   "Calculate the EXPONENT'th power of BASIS."
   (cond
     ((= exponent 0) 1)
     ((< exponent 0) (* (/ 1 basis) (expo basis (1+ exponent))))
     (t (* basis (expo basis (- exponent 1))))))
+
+;; Exercise 1.5 [m]
+
+(defun dot-product (a b)
+  (apply #'+ (mapcar #'* a b)))
 
