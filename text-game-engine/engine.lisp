@@ -114,8 +114,6 @@
   "Return T if TEXT ends with a punctuation character."
   (str:s-member '("." "?" "!") (str:s-last text)))
 
-(str:s-last "hello.")
-
 (defun format-text (symbols)
   "Render a list of symbols as text.
   The first letter of every sentence will be capitalised."
