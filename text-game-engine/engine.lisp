@@ -1,6 +1,7 @@
 ; Chapter 5 of Land of Lisp
 
 (ql:quickload "fiveam")
+(ql:quickload "str")
 (load "hashtbl.lisp")
 
 (defparameter *nodes*
@@ -68,8 +69,6 @@
                      (look)))
       '(you cannot go that way.))))
 
-; (defun move-object)
-
 (defun pickup (object)
   (cond ((member object
                  (objects-at *location* *objects* *object-locations*))
@@ -81,3 +80,48 @@
   (list 'inventory (objects-at 'body *objects* *object-locations*)))
 
 (look)
+
+(defun game-read ()
+  "Read a user command and turn it into an s-expression.
+  The command is equivalent to an s-expression,
+  expect you can leave out the leading and trailing parens,
+  and you don't have to quote symbols."
+  (let ((cmd (read-from-string
+               (concatenate 'string "(" (read-line) ")"))))
+    (flet ((quote-it (x) (list 'quote x)))
+      (cons (first cmd) (mapcar #'quote-it (rest cmd))))))
+
+(game-read)
+
+(defparameter *allowed-commands* '(look walk pick-up inventory)
+  "List of supported player actions.")
+
+(defun game-eval (sexp)
+  "Evaluate a game command, given as SEXP."
+  (if (member (first sexp) *allowed-commands*)
+      (eval sexp)
+      '(I do not know that command.)))
+
+(defun sym-to-str (sym should-be-capitalised)
+  "Turn a symbol into a string.
+  If SHOULD-BE-CAPITALISED, the first letter will be upper-case.
+  Otherwise, the string will be all lower-case."
+  (if should-be-capitalised
+      (str:capitalize sym)
+      (str:downcase sym)))
+
+(defun ends-with-punctuation-p (text)
+  "Return T if TEXT ends with a punctuation character."
+  (str:s-member '("." "?" "!") (str:s-last text)))
+
+(str:s-last "hello.")
+
+(defun format-text (symbols)
+  "Render a list of symbols as text.
+  The first letter of every sentence will be capitalised."
+  (let ((uppercase-next t))
+    (flet ((process-one (sym)
+             (let ((s (sym-to-str sym uppercase-next)))
+               (setq uppercase-next (ends-with-punctuation-p s))
+               s)))
+      (str:join " " (mapcar #'process-one symbols)))))
