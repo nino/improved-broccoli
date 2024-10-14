@@ -106,9 +106,11 @@
   "Turn a symbol into a string.
   If SHOULD-BE-CAPITALISED, the first letter will be upper-case.
   Otherwise, the string will be all lower-case."
-  (if should-be-capitalised
-      (str:capitalize sym)
-      (str:downcase sym)))
+  (if (stringp sym)
+      sym
+      (if should-be-capitalised
+          (str:capitalize sym)
+          (str:downcase sym))))
 
 (defun ends-with-punctuation-p (text)
   "Return T if TEXT ends with a punctuation character."
@@ -123,3 +125,4 @@
                (setq uppercase-next (ends-with-punctuation-p s))
                s)))
       (str:join " " (mapcar #'process-one symbols)))))
+
